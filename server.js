@@ -19,7 +19,12 @@ if (!KEY_ID || !KEY_SECRET) {
   console.warn('WARNING: RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET are not set.');
 }
 
-const razorpay = new Razorpay({ key_id: KEY_ID || '', key_secret: KEY_SECRET || '' });
+let razorpay = null;
+function getRazorpay() {
+  if (!KEY_ID || !KEY_SECRET) throw new Error('Razorpay keys are not configured on the server.');
+  if (!razorpay) razorpay = new Razorpay({ key_id: KEY_ID, key_secret: KEY_SECRET });
+  return razorpay;
+}
 
 const allowedColors = new Set(['Vintage Brown', 'Seaweed Green', 'Ghost Black', 'Space White']);
 
@@ -50,7 +55,7 @@ app.post('/api/create-order', async (req, res) => {
     if (!KEY_ID || !KEY_SECRET) return res.status(500).json({ error: 'Razorpay keys are not configured on the server.' });
     const customer = validateCustomer(req.body);
     const receipt = `VQ_${Date.now()}`;
-    const order = await razorpay.orders.create({
+    const order = await getRazorpay().orders.create({
       amount: AMOUNT,
       currency: 'INR',
       receipt,
@@ -92,12 +97,12 @@ app.post('/api/verify-payment', async (req, res) => {
     const customer = validateCustomer(req.body.customer || {});
 
     // Fetch the server-created order so the amount is never trusted from the browser.
-    const order = await razorpay.orders.fetch(orderId);
+    const order = await getRazorpay().orders.fetch(orderId);
     if (order.amount !== AMOUNT || order.currency !== 'INR') {
       return res.status(400).json({ error: 'Order amount mismatch.' });
     }
 
-    const payment = await razorpay.payments.fetch(paymentId);
+    const payment = await getRazorpay().payments.fetch(paymentId);
     if (payment.order_id !== orderId || Number(payment.amount) !== AMOUNT) {
       return res.status(400).json({ error: 'Payment/order mismatch.' });
     }
@@ -157,4 +162,8 @@ async function saveToGoogleSheets(record) {
 app.use(express.static(PUBLIC_DIR));
 app.use((req, res) => res.sendFile(path.join(PUBLIC_DIR, 'index.html')));
 
-app.listen(PORT, () => console.log(`VINTIQQ store running on port ${PORT}`));
+if (require.main === module) {
+  app.listen(PORT, () => console.log(`VINTIQQ store running on port ${PORT}`));
+}
+
+module.exports = app;
