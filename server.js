@@ -13,7 +13,7 @@ const KEY_SECRET = process.env.RAZORPAY_KEY_SECRET;
 const SHEETS_WEBHOOK_URL = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
 const SHEETS_SHARED_SECRET = process.env.GOOGLE_SHEETS_SHARED_SECRET;
 const PUBLIC_DIR = path.join(__dirname, 'public');
-const AMOUNT = 1399 * 100;
+const AMOUNT = 1499 * 100;
 
 if (!KEY_ID || !KEY_SECRET) {
   console.warn('WARNING: RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET are not set.');
@@ -113,7 +113,7 @@ app.post('/api/verify-payment', async (req, res) => {
       status: payment.status,
       product: 'VINTIQQ Life Camera',
       color: customer.color,
-      amount: 1399,
+      amount: 1499,
       currency: 'INR',
       name: customer.name,
       phone: customer.phone,
@@ -167,3 +167,4 @@ if (require.main === module) {
 }
 
 module.exports = app;
+
