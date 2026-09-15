@@ -88,19 +88,7 @@ form.addEventListener('submit', async (e) => {
         color: customer.color
       },
       theme: { color: '#ff5a00' },
-      config: {
-        display: {
-          blocks: {
-            upi: {
-              name: 'Pay via UPI',
-              instruments: [{ method: 'upi' }]
-            }
-          },
-          sequence: ['block.upi'],
-          preferences: { show_default_blocks: false }
-        }
-      },
-      handler: async function (response) {
+            handler: async function (response) {
         try {
           setBusy(true, 'CONFIRMING PAYMENT…');
           const result = await verifyPayment(response, customer);
