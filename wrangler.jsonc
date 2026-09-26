@@ -7,12 +7,5 @@
     "directory": "./public",
     "binding": "ASSETS"
   },
-  "secrets": {
-    "required": [
-      "RAZORPAY_KEY_ID",
-      "RAZORPAY_KEY_SECRET",
-      "GOOGLE_SHEETS_WEBHOOK_URL",
-      "GOOGLE_SHEETS_SHARED_SECRET"
-    ]
-  }
+  
 }
